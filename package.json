@@ -1,0 +1,14 @@
+{
+  "name": "receipt-tip-calculator",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Upload a receipt, an AI vision model reads the total, and it calculates the tip.",
+  "license": "MIT",
+  "scripts": {
+    "dev": "vercel dev",
+    "compare": "node model-test.mjs"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Receipt Tip Reader</title>
+  <meta name="description" content="Upload a receipt photo and let AI read the total and figure out the tip." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Schibsted+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- Password gate -->
+  <div id="gate" class="gate">
+    <form class="gate__card" id="gateForm">
+      <h1>Receipt Tip Reader</h1>
+      <p>This site is password protected.</p>
+      <div class="input-wrap">
+        <input id="password" type="password" placeholder="Enter password" autocomplete="current-password" />
+      </div>
+      <button type="submit" class="btn btn--primary" id="unlockBtn">Unlock</button>
+      <p class="gate__error" id="gateError" hidden>Wrong password — try again.</p>
+    </form>
+  </div>
+
+  <!-- Main app -->
+  <main class="app" id="app" hidden>
+    <header class="app__head">
+      <h1>Receipt Tip Reader</h1>
+      <p>Snap a receipt, let AI read the total, and split the tip.</p>
+    </header>
+
+    <section class="panel">
+      <label class="field-label" for="model">Vision model</label>
+      <div class="select-wrap">
+        <select id="model"></select>
+      </div>
+      <p class="hint" id="modelHint"></p>
+    </section>
+
+    <section class="panel">
+      <label class="field-label">Receipt photo</label>
+      <label class="dropzone" id="dropzone" for="file">
+        <input id="file" type="file" accept="image/*" hidden />
+        <img id="preview" class="dropzone__preview" alt="" hidden />
+        <div class="dropzone__prompt" id="dropPrompt">
+          <span class="dropzone__icon">📄</span>
+          <span>Tap to upload or drag a receipt here</span>
+          <span class="hint">JPG, PNG, HEIC · resized in your browser before sending</span>
+        </div>
+      </label>
+      <button type="button" class="btn btn--primary" id="readBtn" disabled>Read receipt</button>
+      <p class="status" id="status" hidden></p>
+    </section>
+
+    <section class="panel panel--read" id="readout" hidden>
+      <div class="readout__head">
+        <span class="badge" id="modelBadge"></span>
+        <span class="badge badge--soft" id="latencyBadge"></span>
+      </div>
+      <p class="merchant" id="merchant"></p>
+      <div class="amounts">
+        <div class="amount">
+          <span class="amount__label">Subtotal</span>
+          <span class="amount__value" id="amtSubtotal">—</span>
+        </div>
+        <div class="amount">
+          <span class="amount__label">Tax</span>
+          <span class="amount__value" id="amtTax">—</span>
+        </div>
+        <div class="amount">
+          <span class="amount__label">Total</span>
+          <span class="amount__value" id="amtTotal">—</span>
+        </div>
+      </div>
+      <p class="hint" id="extractNote"></p>
+    </section>
+
+    <section class="panel" id="tipPanel" hidden>
+      <div class="field">
+        <div class="row-between">
+          <label class="field-label">Tip base</label>
+          <div class="toggle" id="baseToggle">
+            <button type="button" data-base="subtotal" class="toggle__btn is-active">Subtotal</button>
+            <button type="button" data-base="total" class="toggle__btn">Total</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="field-label">Tip</label>
+        <div class="tip-grid" id="tipGrid">
+          <button type="button" class="tip-btn" data-tip="15">15%</button>
+          <button type="button" class="tip-btn is-active" data-tip="18">18%</button>
+          <button type="button" class="tip-btn" data-tip="20">20%</button>
+          <button type="button" class="tip-btn" data-tip="22">22%</button>
+          <button type="button" class="tip-btn" data-tip="25">25%</button>
+          <div class="input-wrap input-wrap--custom">
+            <input id="customTip" type="number" inputmode="decimal" min="0" step="1" placeholder="Custom" />
+            <span class="suffix">%</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="people">Split between</label>
+        <div class="stepper">
+          <button type="button" id="minus" aria-label="Fewer people">&minus;</button>
+          <input id="people" type="number" inputmode="numeric" min="1" step="1" value="1" />
+          <button type="button" id="plus" aria-label="More people">+</button>
+        </div>
+      </div>
+
+      <div class="results">
+        <div class="result-row">
+          <span class="result-label">Tip</span>
+          <span class="result-value" id="tipOut">$0.00</span>
+        </div>
+        <div class="result-row">
+          <span class="result-label">Total with tip</span>
+          <span class="result-value" id="grandOut">$0.00</span>
+        </div>
+        <div class="result-row result-row--hero">
+          <div>
+            <span class="result-label">Per person</span>
+            <span class="result-sub"><span id="peopleCount">1</span> splitting</span>
+          </div>
+          <span class="result-value" id="perPersonOut">$0.00</span>
+        </div>
+      </div>
+    </section>
+
+    <footer class="app__foot">
+      Built with Claude Code · Powered by OpenRouter
+      <button type="button" class="linklike" id="lockBtn">Lock</button>
+    </footer>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
